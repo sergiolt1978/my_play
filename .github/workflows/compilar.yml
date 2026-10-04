@@ -1,0 +1,26 @@
+name: Compilar Clon XorPlay
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: devkitpro/devkita64:latest
+
+    steps:
+      - name: Descargar codigo fuente limpio
+        run: |
+          apt-get update && apt-get install -y git wget
+          git clone https://github.com .
+
+      - name: Compilar con devkitPro
+        run: |
+          make
+
+      - name: Guardar el archivo compilado (.nsp)
+        uses: actions/upload-artifact@v4
+        with:
+          name: mi-sysmodule
+          path: |
+            *.nsp
+            
