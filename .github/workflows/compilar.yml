@@ -8,10 +8,13 @@ jobs:
     container: devkitpro/devkita64:latest
 
     steps:
-      - name: Descargar codigo fuente limpio
+      - name: Instalar herramientas de descarga
         run: |
           apt-get update && apt-get install -y git wget ca-certificates
           update-ca-certificates
+
+      - name: Descargar codigo fuente limpio
+        run: |
           git clone https://github.com .
 
       - name: Compilar con devkitPro
