@@ -1,0 +1,24 @@
+name: Compilar Sysmodule Switch
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: devkitpro/devkita64:latest
+
+    steps:
+      - name: Descargar el codigo
+        uses: actions/checkout@v4
+
+      - name: Compilar con devkitPro
+        run: |
+          make
+
+      - name: Guardar el archivo compilado (.nsp)
+        uses: actions/upload-artifact@v4
+        with:
+          name: mi-sysmodule
+          path: |
+            *.nsp
+            
