@@ -1,0 +1,49 @@
+name: Compilar Sysmodule Switch
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Compilar
+    runs-on: ubuntu-latest
+
+    container:
+      image: devkitpro/devkita64:latest
+
+    steps:
+      - name: Descargar código
+        uses: actions/checkout@v4
+
+      - name: Comprobar entorno
+        run: |
+          echo "DEVKITPRO=$DEVKITPRO"
+          echo "DEVKITA64=$DEVKITA64"
+          make --version
+          aarch64-none-elf-g++ --version
+
+      - name: Limpiar compilación anterior
+        run: |
+          make clean || true
+
+      - name: Compilar
+        run: |
+          make
+
+      - name: Comprobar resultado
+        run: |
+          echo "===== ARCHIVOS GENERADOS ====="
+          ls -lah
+          echo "===== ELF ====="
+          file mi_sys_play.elf
+          ls -lh mi_sys_play.elf
+
+      - name: Subir compilación
+        uses: actions/upload-artifact@v4
+        with:
+          name: mi_sysmodule
+          path: |
+            mi_sys_play.elf
+            mi_sys_play.map
