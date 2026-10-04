@@ -1,52 +1,55 @@
 ifeq ($(strip $(DEVKITPRO)),)
-$(error "Por favor, establece la variable DEVKITPRO en tu entorno.")
+$(error "DEVKITPRO no está definido")
 endif
 
 include $(DEVKITPRO)/libnx/switch_rules
 
-TARGET		:=	mi_sys_play
-BUILD		:=	build
-SOURCES		:=	.
+TARGET  := mi_sys_play
+BUILD   := build
+SOURCES := .
 
-ARCH		:=	-march=armv8-a+crc+crypto -mtune=cortex-a57 -mtp=soft -fPIE
+ARCH := -march=armv8-a+crc+crypto -mtune=cortex-a57 -mtp=soft -fPIE
 
-CFLAGS	:=	-g -Wall -O2 -ffunction-sections \
-			-march=armv8-a+crc+crypto -mtune=cortex-a57 -mtp=soft -fPIE -D__SWITCH__ \
-			$(INCLUDE)
+CFLAGS := -g -Wall -O2 -ffunction-sections \
+          $(ARCH) \
+          -D__SWITCH__
 
-CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions
+CXXFLAGS := $(CFLAGS) -fno-rtti -fno-exceptions
 
-ASFLAGS	:=	-g $(ARCH)
-LDFLAGS	:=	-specs=$(DEVKITPRO)/libnx/switch.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
+ASFLAGS := -g $(ARCH)
 
-LIBS	:=	-lnx
+LDFLAGS := -specs=$(DEVKITPRO)/libnx/switch.specs \
+           $(ARCH) \
+           -Wl,-Map,$(TARGET).map
 
-CFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))
-CPPFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
+LIBS := -lnx
 
-export OUTPUT	:=	$(TARGET)
-export VPATH	:=	$(foreach dir,$(SOURCES),$(CURDIR)/$(dir))
-export DEPSDIR	:=	$(CURDIR)/$(BUILD)
+CFILES := $(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))
+CPPFILES := $(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
 
-export OFILES	:=	$(CPPFILES:.cpp=.o) $(CFILES:.c=.o)
-export INCLUDES	:=	-I$(CURDIR) -I$(DEVKITPRO)/libnx/include
+export OUTPUT := $(TARGET)
+export VPATH := $(foreach dir,$(SOURCES),$(CURDIR)/$(dir))
+export DEPSDIR := $(CURDIR)/$(BUILD)
+
+export OFILES := $(CPPFILES:.cpp=.o) $(CFILES:.c=.o)
+export INCLUDES := -I$(CURDIR) -I$(DEVKITPRO)/libnx/include
 
 .PHONY: all clean
 
-all: $(TARGET).nsp
-
-$(TARGET).nsp: $(TARGET).elf config.json
-	@elf2nso $(TARGET).elf $(TARGET).nso
-	@buildpfs0 $(TARGET).nso config.json $(TARGET).nsp
-	@echo "¡Compilado con éxito!"
+all: $(TARGET).elf
 
 $(TARGET).elf: $(OFILES)
-	@echo Vinculando...
-	@$(CXX) $(LDFLAGS) $^ $(LIBS) -o $@
+	@echo "==> Enlazando $(TARGET).elf"
+	$(CXX) $(LDFLAGS) $^ $(LIBS) -o $@
 
 %.o: %.cpp
-	@echo Compilando $<...
-	@$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+	@echo "==> Compilando $<"
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+
+%.o: %.c
+	@echo "==> Compilando $<"
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 clean:
-	@rm -f *.o *.elf *.nso *.nsp *.map
+	rm -rf $(BUILD)
+	rm -f *.o *.elf *.map
