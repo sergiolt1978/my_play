@@ -1,7 +1,94 @@
 {
-    "name": "Clon de Xor.Play",
-    "author": "Desarrollador",
-    "version": "1.0.0",
-    "title_id": "010000000000a1b2",
-    "title_type": "SystemProgram"
+    "name": "Mi Sys Play",
+    "title_id": "0x010000000000A1B2",
+    "title_id_range_min": "0x010000000000A1B2",
+    "title_id_range_max": "0x010000000000A1B2",
+
+    "main_thread_stack_size": "0x20000",
+    "system_resource_size": "0x200000",
+
+    "main_thread_priority": 49,
+    "default_cpu_id": 3,
+
+    "process_category": 1,
+    "is_retail": true,
+    "pool_partition": 2,
+
+    "is_64_bit": true,
+
+    "disable_device_address_space_merge": false,
+    "optimize_memory_allocation": false,
+    "enable_alias_region_extra_size": false,
+    "prevent_code_reads": false,
+
+    "address_space_type": 1,
+
+    "filesystem_access": {
+        "permissions": "0xffffffffffffffff"
+    },
+
+    "service_access": [
+        "fsp-srv",
+        "pdm:qry",
+        "audout:u"
+    ],
+
+    "service_host": [],
+
+    "kernel_capabilities": [
+        {
+            "type": "kernel_flags",
+            "value": {
+                "highest_thread_priority": 63,
+                "lowest_thread_priority": 24,
+                "lowest_cpu_id": 0,
+                "highest_cpu_id": 3
+            }
+        },
+        {
+            "type": "syscalls",
+            "value": {
+                "svcSetHeapSize": "0x01",
+                "svcCreateThread": "0x08",
+                "svcStartThread": "0x09",
+                "svcExitThread": "0x0A",
+                "svcSleepThread": "0x0B",
+                "svcGetThreadPriority": "0x0C",
+                "svcSetThreadPriority": "0x0D",
+                "svcGetThreadCoreMask": "0x0E",
+                "svcSetThreadCoreMask": "0x0F",
+                "svcGetCurrentProcessorNumber": "0x10",
+                "svcCloseHandle": "0x16",
+                "svcWaitSynchronization": "0x18"
+            }
+        },
+        {
+            "type": "application_type",
+            "value": 1
+        },
+        {
+            "type": "min_kernel_version",
+            "value": "0x0030"
+        },
+        {
+            "type": "handle_table_size",
+            "value": 64
+        },
+        {
+            "type": "debug_flags",
+            "value": {
+                "allow_debug": false,
+                "force_debug_prod": false,
+                "force_debug": false
+            }
+        }
+    ],
+
+    "signature_key_generation": 0,
+    "version": 0,
+    "program_id": "0x010000000000A1B2",
+    "program_id_range_min": "0x010000000000A1B2",
+    "program_id_range_max": "0x010000000000A1B2",
+    "force_debug_prod": false,
+    "unqualified_approval": false
 }
