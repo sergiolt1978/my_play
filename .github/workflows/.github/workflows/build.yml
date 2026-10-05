@@ -1,4 +1,4 @@
-name: Compilar Sysmodule Switch
+name: Compilar Mi Sys Play
 
 on:
   push:
@@ -7,14 +7,15 @@ on:
 
 jobs:
   build:
-    name: Compilar
+    name: Compilar Sysmodule
     runs-on: ubuntu-latest
 
     container:
       image: devkitpro/devkita64:latest
 
     steps:
-      - name: Descargar código
+
+      - name: Descargar codigo
         uses: actions/checkout@v4
 
       - name: Comprobar entorno
@@ -24,7 +25,7 @@ jobs:
           make --version
           aarch64-none-elf-g++ --version
 
-      - name: Limpiar compilación anterior
+      - name: Limpiar
         run: |
           make clean || true
 
@@ -32,18 +33,19 @@ jobs:
         run: |
           make
 
-      - name: Comprobar resultado
+      - name: Comprobar archivos
         run: |
-          echo "===== ARCHIVOS GENERADOS ====="
-          ls -lah
-          echo "===== ELF ====="
-          file mi_sys_play.elf
-          ls -lh mi_sys_play.elf
+          echo "===== ARCHIVOS ====="
+          find . -maxdepth 2 -type f \
+            \( -name "*.elf" -o -name "*.nso" -o -name "*.npdm" -o -name "*.nsp" \) \
+            -print
 
-      - name: Subir compilación
+      - name: Subir NSP
         uses: actions/upload-artifact@v4
         with:
-          name: mi_sysmodule
+          name: mi-sys-play
           path: |
+            mi_sys_play.nsp
+            mi_sys_play.nso
+            mi_sys_play.npdm
             mi_sys_play.elf
-            mi_sys_play.map
